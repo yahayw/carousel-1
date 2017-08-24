@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>简单的轮播</title>
+    <style>
+        ul,
+        li {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .carousel {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .carousel .img-ct {
+            position: absolute;
+            /* width: 1200px; */  /*此元素width不能写死*/
+            overflow: hidden;
+        }
+
+        .carousel .img-ct>li {
+            float: left;
+        }
+
+        .carousel .img-ct img {
+            width: 300px;
+            height: 200px;
+        }
+
+        .carousel .arrow {
+            position: absolute;
+            top: 50%;
+            margin-top: -15px;
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 28px;
+            border: 1px solid #fff;
+            color: #fff;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .carousel .arrow:hover {
+            opacity: 0.8;
+            color: pink;
+            border: 1px solid pink;
+        }
+
+        .carousel .arrow.pre {
+            left: 10px;
+        }
+
+        .carousel .arrow.next {
+            right: 10px;
+        }
+
+        .carousel .bullet {
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            bottom: 10px;
+            text-align: center;
+        }
+
+        .carousel .bullet li {
+            display: inline-block;
+            width: 40px;
+            height: 10px;
+            border: 1px solid #fff;
+            opacity: 0.8;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .carousel .bullet li.active {
+            background-color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="carousel">
+        <ul class="img-ct">
+            <li data-id=0><a href="#"><img src="http://cdn.jirengu.com/book.jirengu.com/img/2.jpg" alt=""></a></li>
+            <li data-id=1><a href="#"><img src="http://cdn.jirengu.com/book.jirengu.com/img/3.jpg" alt=""></a></li>
+            <li data-id=2><a href="#"><img src="http://cdn.jirengu.com/book.jirengu.com/img/4.jpg" alt=""></a></li>
+            <li data-id=3><a href="#"><img src="http://cdn.jirengu.com/book.jirengu.com/img/5.jpg" alt=""></a></li>
+        </ul>
+        <a class="arrow pre" href="#"><</a>
+        <a class="arrow next" href="#">></a>
+        <ul class="bullet">
+            <li class="active"><a href="#"></a></li>
+            <li><a href="#"></a></li>
+            <li><a href="#"></a></li>
+            <li><a href="#"></a></li>
+        </ul>
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+    <script>
+        var $imgCt=$(".img-ct");
+        var $imgs=$(".carousel .img-ct>li");
+        var $preBtn=$(".carousel .pre");
+        var $nextBtn=$(".carousel .next");
+
+        var $bullets=$(".carousel .bullet>li")
+        var currentImg=0
+
+        var imgCount = $imgs.length;
+        var imgWidth=$imgs.width();
+
+        $imgCt.append($imgs.first().clone());
+        $imgCt.prepend($imgs.last().clone());
+        $imgCt.width(imgWidth*(imgCount+2));
+        $imgCt.css({"left":-imgWidth});
+
+        $preBtn.click(function(){
+            showPre(1);
+        })
+        $nextBtn.click(function(){
+            showNext(1);
+        })
+        $bullets.click(function(){            
+            var bulletIndex=$(this).index();
+            if(bulletIndex > currentImg){
+                showNext(bulletIndex-currentImg);
+            }else if(bulletIndex < currentImg){
+                showPre(currentImg-bulletIndex)
+            }
+        })
+
+        function showPre(count){
+            $imgCt.animate({
+                left:"+="+count*imgWidth
+            },function(){
+                currentImg-=count;
+                if(currentImg===-1){
+                    currentImg=imgCount-1;
+                    $imgCt.css({left:-imgWidth*imgCount})
+                }
+                setBullet();
+            })
+        }
+        function showNext(count){
+            $imgCt.animate({
+                left:"-="+count*imgWidth
+            },function(){
+                currentImg+=count;
+                if(currentImg===imgCount){
+                    currentImg=0;
+                    $imgCt.css({left:-imgWidth})
+                }
+                setBullet();
+            })
+        }
+        function setBullet(){
+            $bullets.removeClass("active").eq(currentImg).addClass("active");
+        }
+    </script>
+</body>
+
+</html>
